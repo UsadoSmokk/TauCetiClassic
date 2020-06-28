@@ -299,6 +299,7 @@ var/global/loopModeNames=list(
 		"finland" = "Suomi wave",
 		"dreamsofvenus" = "Dreams of Venus",
 		"hiphop" = "Hip-Hop for Space Gangstas",
+		"lofi" = "Sadness/Longing/Loneliness",
 	)
 
 // Relaxing elevator music~
@@ -326,6 +327,7 @@ var/global/loopModeNames=list(
 		"finland" = "Suomi wave",
 		"dreamsofvenus" = "Dreams of Venus",
 		"hiphop" = "Hip-Hop for Space Gangstas",
+		"lofi" = "Sadness/Longing/Loneliness",
 	)
 
 /obj/machinery/media/jukebox/techno
