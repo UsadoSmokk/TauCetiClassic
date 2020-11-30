@@ -349,6 +349,7 @@
 	H.update_action_buttons()
 
 /obj/item/clothing/suit/space/rig/equipped(mob/M, slot)
+	..()
 	var/mob/living/carbon/human/H = M
 
 	if(!istype(H))
@@ -370,6 +371,7 @@
 	START_PROCESSING(SSobj, src)
 
 /obj/item/clothing/suit/space/rig/dropped(mob/user)
+	..()
 	var/old_wearer = wearer
 	wearer = null
 	var/mob/living/carbon/human/H
@@ -481,7 +483,7 @@
 
 /obj/item/clothing/suit/space/rig/proc/can_install(obj/item/rig_module/new_module)
 	if(installed_modules.len >= max_mounted_devices)
-		to_chat(usr, "The hardsuit has a maximum ammount of modules installed.")
+		to_chat(usr, "The hardsuit has a maximum amount of modules installed.")
 		return FALSE
 
 	if(new_module.redundant)
