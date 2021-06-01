@@ -142,6 +142,8 @@
 
 	var/coughedtime = null
 
+	var/next_point_to = 0
+
 	var/music_lastplayed = "null"
 
 	var/job = null//Living
@@ -149,7 +151,6 @@
 	var/const/blindness = 1//Carbon
 	var/const/deafness = 2//Carbon
 	var/const/muteness = 4//Carbon
-
 
 	var/datum/dna/dna = null//Carbon
 	var/radiation = 0.0//Carbon
@@ -235,3 +236,14 @@
 	var/list/weather_immunities = list()
 
 	var/list/progressbars = null //for stacking do_after bars
+
+	// This is a ref to the religion that the mob is involved in.
+	// Mobs without mind can be member of a religion
+	var/datum/religion/my_religion
+
+	// datum/atom_hud
+	hud_possible = list(ANTAG_HUD, HOLY_HUD)
+	// Mob typing indication
+	var/typing = FALSE
+	var/obj/effect/overlay/typing_indicator/typing_indicator
+	var/typing_indicator_type = "default"

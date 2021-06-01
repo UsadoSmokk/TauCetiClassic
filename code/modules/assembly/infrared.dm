@@ -4,7 +4,6 @@
 	icon_state = "infrared"
 	m_amt = 1000
 	g_amt = 500
-	w_amt = 100
 	origin_tech = "magnets=2"
 
 	wires = WIRE_PULSE
@@ -72,7 +71,7 @@
 		var/obj/effect/beam/i_beam/I = new /obj/effect/beam/i_beam(T)
 		I.master = src
 		I.density = 1
-		I.dir = dir
+		I.set_dir(dir)
 		first = I
 		step(I, I.dir)
 		if(first)
@@ -89,7 +88,7 @@
 /obj/item/device/assembly/infra/Move(NewLoc, Dir = 0, step_x = 0, step_y = 0)
 	var/t = dir
 	. = ..()
-	dir = t
+	set_dir(t)
 	qdel(first)
 
 /obj/item/device/assembly/infra/holder_movement()
@@ -110,9 +109,9 @@
 		process_cooldown()
 	var/time_pulse = time2text(world.realtime,"hh:mm:ss")
 	var/turf/T = get_turf(src)
-	lastsignalers.Add("[time_pulse] <B>:</B> [src] activated  @ location ([T.x],[T.y],[T.z])")
-	message_admins("[src] activated  @ location ([T.x],[T.y],[T.z]) [ADMIN_JMP(T)]")
-	log_game("[src] activated  @ location ([T.x],[T.y],[T.z])")
+	lastsignalers.Add("[time_pulse] <B>:</B> [src] activated  @ location [COORD(T)]")
+	message_admins("[src] activated  @ location [COORD(T)] [ADMIN_JMP(T)]")
+	log_game("[src] activated  @ location [COORD(T)]")
 	return
 
 /obj/item/device/assembly/infra/interact(mob/user)//TODO: change this this to the wire control panel
@@ -139,13 +138,13 @@
 		var/time_start = time2text(world.realtime,"hh:mm:ss")
 		var/turf/T = get_turf(src)
 		if(usr)
-			lastsignalers.Add("[time_start] <B>:</B> [usr.key] set [src] [on?"On":"Off"] @ location ([T.x],[T.y],[T.z])")
-			message_admins("[key_name_admin(usr)] set [src] [on?"On":"Off"], location ([T.x],[T.y],[T.z]) [ADMIN_JMP(usr)]")
-			log_game("[usr.ckey]([usr]) set [src] [on?"On":"Off"], location ([T.x],[T.y],[T.z])")
+			lastsignalers.Add("[time_start] <B>:</B> [usr.key] set [src] [on?"On":"Off"] @ location [COORD(T)]")
+			message_admins("[key_name_admin(usr)] set [src] [on?"On":"Off"], location [COORD(T)] [ADMIN_JMP(usr)]")
+			log_game("[usr.ckey]([usr]) set [src] [on?"On":"Off"], location [COORD(T)]")
 		else
-			lastsignalers.Add("[time_start] <B>:</B> (NO USER FOUND) set [src] [on?"On":"Off"] @ location ([T.x],[T.y],[T.z])")
-			message_admins("( NO USER FOUND) set [src] [on?"On":"Off"], location ([T.x],[T.y],[T.z])")
-			log_game("(NO USER FOUND) set [src] [on?"On":"Off"], location ([T.x],[T.y],[T.z])")
+			lastsignalers.Add("[time_start] <B>:</B> (NO USER FOUND) set [src] [on?"On":"Off"] @ location [COORD(T)]")
+			message_admins("( NO USER FOUND) set [src] [on?"On":"Off"], location [COORD(T)]")
+			log_game("(NO USER FOUND) set [src] [on?"On":"Off"], location [COORD(T)]")
 
 	if(href_list["visible"])
 		visible = !(visible)
@@ -166,7 +165,7 @@
 	if(usr.incapacitated())
 		return
 
-	dir = turn(dir, 90)
+	set_dir(turn(dir, 90))
 	return
 
 
@@ -214,7 +213,7 @@
 		var/obj/effect/beam/i_beam/I = new /obj/effect/beam/i_beam(loc)
 		I.master = master
 		I.density = 1
-		I.dir = dir
+		I.set_dir(dir)
 		I.previous = src
 		next = I
 		step(I, I.dir)

@@ -74,7 +74,7 @@ var/list/airlock_overlays = list()
 	if(glass && !inner_material)
 		inner_material = "glass"
 	if(dir)
-		src.dir = dir
+		src.set_dir(dir)
 
 	update_icon()
 	return INITIALIZE_HINT_LATELOAD
@@ -132,7 +132,7 @@ var/list/airlock_overlays = list()
 	return FALSE
 
 /obj/machinery/door/airlock/proc/isWireCut(wireIndex)
-	return wires.is_index_cut(wireIndex)
+	return wires?.is_index_cut(wireIndex)
 
 /obj/machinery/door/airlock/proc/canAIControl()
 	return ((aiControlDisabled != 1) && !isAllPowerCut());
@@ -622,8 +622,9 @@ var/list/airlock_overlays = list()
 	var/obj/structure/door_assembly/da = new assembly_type(loc)
 	da.anchored = 0
 	var/target = da.loc
-	for(var/i in 1 to 4)
-		target = get_turf(get_step(target,user.dir))
+	if(user)
+		for(var/i in 1 to 4)
+			target = get_turf(get_step(target,user.dir))
 	da.throw_at(target, 200, 100, spin = FALSE)
 	if(mineral)
 		da.change_mineral_airlock_type(mineral)
@@ -832,7 +833,7 @@ var/list/airlock_overlays = list()
 						to_chat(usr, "The door is already electrified. You can't re-electrify it while it's already electrified.<br>\n")
 					else
 						shockedby += "\[[time_stamp()]\][usr](ckey:[usr.ckey])"
-						usr.attack_log += "\[[time_stamp()]\] <font color='red'>Electrified the [name] at [x] [y] [z]</font>"
+						usr.attack_log += "\[[time_stamp()]\] <font color='red'>Electrified the [name] at [COORD(src)]</font>"
 						secondsElectrified = 30
 						diag_hud_set_electrified()
 						START_PROCESSING(SSmachines, src)
@@ -847,7 +848,7 @@ var/list/airlock_overlays = list()
 						to_chat(usr, "The door is already electrified. You can't re-electrify it while it's already electrified.<br>\n")
 					else
 						shockedby += "\[[time_stamp()]\][usr](ckey:[usr.ckey])"
-						usr.attack_log += "\[[time_stamp()]\] <font color='red'>Electrified the [name] at [x] [y] [z]</font>"
+						usr.attack_log += "\[[time_stamp()]\] <font color='red'>Electrified the [name] at [COORD(src)]</font>"
 						secondsElectrified = -1
 						diag_hud_set_electrified()
 
@@ -921,7 +922,7 @@ var/list/airlock_overlays = list()
 	if(istype(C, /obj/item/device/detective_scanner) || istype(C, /obj/item/taperoll))
 		return
 
-	if(iswelder(C) && !(operating > 0) && density)
+	if(iswelder(C) && !(operating > 0))
 		var/obj/item/weapon/weldingtool/W = C
 		if(W.use(0, user))
 			user.visible_message("[user] begins [welded? "unwelding":"welding"] [src]'s shutters with [W].",
@@ -929,8 +930,8 @@ var/list/airlock_overlays = list()
 			if(W.use_tool(src, user, 30, volume = 100))
 				welded = !welded
 				update_icon()
-				user.visible_message("[user] [welded?"welds":"unwelds"] [src]'s shutters with [W].",
-				                     "<span class='notice'>You [welded? "weld":"remove welding from"] [src]'s shutters with [W].</span>")
+				user.visible_message("[user] [welded ? "welds" : "unwelds"] [src]'s shutters with [W].",
+				                     "<span class='notice'>You [welded ? "weld" : "remove welding from"] [src]'s shutters with [W].</span>")
 				return
 		else
 			to_chat(user, "<span class='notice'>You need more welding fuel to complete this task.</span>")
@@ -966,7 +967,7 @@ var/list/airlock_overlays = list()
 				if(glass && da.can_insert_glass)
 					da.set_glass(TRUE)
 				da.state = ASSEMBLY_WIRED
-				da.dir = dir
+				da.set_dir(dir)
 				da.created_name = name
 				da.update_state()
 
@@ -1046,6 +1047,9 @@ var/list/airlock_overlays = list()
 				if(locate(/mob/living) in T)
 					autoclose()
 					return FALSE
+				if(locate(/obj/mecha) in T)
+					autoclose()
+					return FALSE
 		return TRUE
 	return FALSE
 
@@ -1086,31 +1090,8 @@ var/list/airlock_overlays = list()
 	..()
 
 /obj/machinery/door/airlock/do_afterclose()
-	for(var/turf/T in locs)
-		for(var/mob/living/M in T)
-			if(isrobot(M))
-				M.adjustBruteLoss(DOOR_CRUSH_DAMAGE * 0.5)
-			else
-				M.adjustBruteLoss(DOOR_CRUSH_DAMAGE)
-				M.SetStunned(5)
-				M.SetWeakened(5)
-
-			var/turf/mob_turf = get_turf(M)
-			if(M.buckled)
-				M.buckled.unbuckle_mob()
-			for(var/dir in cardinal)
-				var/turf/new_turf = get_step(mob_turf, dir)
-				if(M.Move(new_turf))
-					break
-
-			M.visible_message("<span class='red'>[M] was crushed by the [src] door.</span>",
-			                  "<span class='danger'>[src] door crushed you.</span>")
-
-		for(var/obj/structure/window/W in T)
-			W.ex_act(2)
-
-		for(var/obj/effect/fluid/F in T)
-			qdel(F)
+	for(var/atom/A in orange(0, src))
+		A.airlock_crush_act()
 	..()
 
 /obj/machinery/door/airlock/proc/autoclose()

@@ -274,12 +274,10 @@
 		radio_off_mob(M)
 
 /obj/item/device/abductor/silencer/proc/radio_off_mob(mob/living/carbon/human/M)
-	var/list/all_items = M.GetAllContents()
+	var/list/all_items = M.get_all_contents_type(/obj/item/device/radio)
 
-	for(var/obj/I in all_items)
-		if(istype(I,/obj/item/device/radio))
-			var/obj/item/device/radio/r = I
-			r.on = 0
+	for(var/obj/item/device/radio/R in all_items)
+		R.on = 0
 
 
 //RECALL IMPLANT
@@ -627,17 +625,17 @@
 			if(90)
 				if(fastened.pixel_x != 2)
 					fastened.pixel_x = 2
-				animation.dir = 2
-				src.dir = 2
+				animation.set_dir(2)
+				src.set_dir(2)
 			else
 				if(fastened.pixel_x != -2)
 					fastened.pixel_x = -2
-				animation.dir = 1
-				src.dir = 1
+				animation.set_dir(1)
+				src.set_dir(1)
 		if(fastened.pixel_y != -4)
 			fastened.pixel_y = -4
 		if(fastened.dir & (EAST|WEST|NORTH))
-			fastened.dir = SOUTH
+			fastened.set_dir(SOUTH)
 
 		flick("belt_anim_on",animation)
 		sleep(7)
@@ -648,8 +646,8 @@
 	else
 		cut_overlay(belt)
 		switch(fastened.lying_current)
-			if(90)	animation.dir = 2
-			else	animation.dir = 1
+			if(90)	animation.set_dir(2)
+			else	animation.set_dir(1)
 		flick("belt_anim_off",animation)
 		sleep(9)
 		fastened.SetStunned(0)

@@ -24,13 +24,37 @@
 	for(var/area/A in all_areas)
 		if(A.name == N)
 			return A
-	return 0
+	return null
+
+/proc/get_area_by_type(type) //get area by its type
+	return locate(type) in all_areas
 
 /proc/in_range(source, user)
 	if(get_dist(source, user) <= 1)
 		return 1
 
 	return 0 //not in range and not telekinetic
+
+/**
+ * Get a bounding box of a list of atoms.
+ *
+ * Arguments:
+ * - atoms - List of atoms. Can accept output of view() and range() procs.
+ *
+ * Returns: list(x1, y1, x2, y2)
+ */
+/proc/get_bbox_of_atoms(list/atoms)
+	var/list/list_x = list()
+	var/list/list_y = list()
+	for(var/_a in atoms)
+		var/atom/a = _a
+		list_x += a.x
+		list_y += a.y
+	return list(
+		min(list_x),
+		min(list_y),
+		max(list_x),
+		max(list_y))
 
 // Like view but bypasses luminosity check
 
@@ -131,7 +155,7 @@
 			if(sight_check && !isInSight(A, O))
 				continue
 			L |= M
-			//world.log << "[recursion_limit] = [M] - [get_turf(M)] - ([M.x], [M.y], [M.z])"
+			//world.log << "[recursion_limit] = [M] - [get_turf(M)] - [COORD(M)]"
 
 		else if(include_radio && istype(A, /obj/item/device/radio))
 			if(sight_check && !isInSight(A, O))
@@ -161,7 +185,7 @@
 			var/mob/M = A
 			if(M.client)
 				hear += M
-			//world.log << "Start = [M] - [get_turf(M)] - ([M.x], [M.y], [M.z])"
+			//world.log << "Start = [M] - [get_turf(M)] - [COORD(M)]"
 		else if(istype(A, /obj/item/device/radio))
 			hear += A
 
@@ -505,13 +529,21 @@
 		return new/list()
 
 //============TG PORTS============
+/proc/remove_images_from_clients(image/I, list/show_to)
+	for(var/client/C in show_to)
+		C.images -= I
+
 /proc/flick_overlay(image/I, list/show_to, duration)
 	for(var/client/C in show_to)
 		C.images += I
-	spawn(duration)
-		for(var/client/C in show_to)
-			C.images -= I
+	addtimer(CALLBACK(GLOBAL_PROC, /proc/remove_images_from_clients, I, show_to), duration, TIMER_CLIENT_TIME)
 
+/proc/flick_overlay_view(image/I, atom/target, duration) //wrapper for the above, flicks to everyone who can see the target atom
+	var/list/viewing = list()
+	for(var/mob/M in viewers(target))
+		if(M.client)
+			viewing += M.client
+	flick_overlay(I, viewing, duration)
 
 //============Bay12 atmos=============
 /proc/convert_k2c(temp)

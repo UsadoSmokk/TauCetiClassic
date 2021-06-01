@@ -1,23 +1,24 @@
 
-var/global/list/space_surprises = list(		/obj/item/weapon/pickaxe/silver					=4,
-											/obj/item/weapon/pickaxe/drill					=4,
-											/obj/item/weapon/pickaxe/drill/jackhammer		=4,
-											/obj/item/weapon/twohanded/sledgehammer			=3,
-											/obj/item/weapon/pickaxe/diamond				=3,
-											/obj/item/weapon/pickaxe/drill/diamond_drill	=3,
-											/obj/item/weapon/pickaxe/gold					=3,
-											/obj/item/weapon/pickaxe/plasmacutter			=2,
-											/obj/structure/closet/syndicate/resources		=2,
-											/obj/item/weapon/melee/energy/sword/pirate		=1,
-											/obj/mecha/working/ripley/mining				=1
-											)
+var/global/list/space_surprises = list(
+	/obj/item/weapon/pickaxe/silver					= 4,
+	/obj/item/weapon/pickaxe/drill					= 4,
+	/obj/item/weapon/pickaxe/drill/jackhammer		= 4,
+	/obj/item/weapon/twohanded/sledgehammer			= 3,
+	/obj/item/weapon/pickaxe/diamond				= 3,
+	/obj/item/weapon/pickaxe/drill/diamond_drill	= 3,
+	/obj/item/weapon/pickaxe/gold					= 3,
+	/obj/item/weapon/pickaxe/plasmacutter			= 2,
+	/obj/structure/closet/syndicate/resources		= 2,
+	/obj/item/weapon/melee/energy/sword/pirate		= 1,
+	/obj/mecha/working/ripley/mining				= 1
+	)
 
 var/global/list/spawned_surprises = list()
 
 /proc/spawn_room(atom/start_loc,x_size,y_size,wall,floor , clean = 0 , name)
 	var/list/room_turfs = list("walls"=list(),"floors"=list())
 
-	//world << "Room spawned at [start_loc.x],[start_loc.y],[start_loc.z]"
+	//world << "Room spawned at [COORD(start_loc)]"
 	if(!wall)
 		wall = pick(/turf/simulated/wall/r_wall, /turf/simulated/wall, /obj/structure/alien/resin/wall, /turf/simulated/wall/mineral/sandstone)
 	if(!floor)
