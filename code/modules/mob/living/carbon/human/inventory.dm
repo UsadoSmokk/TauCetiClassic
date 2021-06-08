@@ -328,8 +328,9 @@
 			update_inv_gloves()
 		if(SLOT_HEAD)
 			src.head = W
-			if((W.flags & BLOCKHAIR) || (W.flags & BLOCKHEADHAIR))
+			if((W.flags & BLOCKHAIR) || (W.flags & BLOCKHEADHAIR) || (W.flags & BLOCKFACEMASK))
 				update_hair()	//rebuild hair
+				update_inv_wear_mask()	//rebuild mask
 			if(istype(W,/obj/item/clothing/head/kitty))
 				W.update_icon(src)
 			W.equipped(src, slot)

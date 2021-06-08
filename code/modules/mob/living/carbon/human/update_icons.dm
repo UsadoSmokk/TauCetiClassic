@@ -681,8 +681,9 @@ Please contact me on #coderbus IRC. ~Carn x
 
 /mob/living/carbon/human/update_inv_wear_mask()
 	remove_overlay(FACEMASK_LAYER)
-
 	if(istype(wear_mask, /obj/item/clothing/mask) || istype(wear_mask, /obj/item/clothing/accessory))
+		if (head && (head.flags & BLOCKFACEMASK)) // Skip facemask overlay on helmet
+			return
 		if(client && hud_used && hud_used.hud_shown)
 			if(hud_used.inventory_shown)			//if the inventory is open ...
 				wear_mask.screen_loc = ui_mask		//...draw the item in the inventory screen

@@ -290,12 +290,38 @@
 	icon_state = "voxmask"
 	item_state = "voxmask"
 	flags = MASKCOVERSMOUTH | MASKINTERNALS | BLOCK_GAS_SMOKE_EFFECT
-	flags_inv = 0
-	body_parts_covered = 0
+	flags_inv = HIDEEYES|HIDEFACE
+	body_parts_covered = FACE|EYES
 	w_class = ITEM_SIZE_SMALL
 	gas_transfer_coefficient = 0.10
 	filter = list("phoron", "sleeping_agent", "oxygen")
 	species_restricted = list(VOX , VOX_ARMALIS)
+	action_button_name = "Hanging Mask"
+	var/hanging = 0
+
+
+/obj/item/clothing/mask/gas/vox/attack_self()
+
+	if(!usr.incapacitated())
+		if(!src.hanging)
+			src.hanging = !src.hanging
+			gas_transfer_coefficient = 1 //gas is now escaping to the turf and vice versa
+			flags = 0
+			flags_inv = 0
+			body_parts_covered = 0
+			icon_state = "voxmaskdown"
+			filter = 0
+			to_chat(usr, "Your mask is now hanging on your neck.")
+		else
+			src.hanging = !src.hanging
+			gas_transfer_coefficient = 0.10
+			flags = MASKCOVERSMOUTH | MASKINTERNALS | BLOCK_GAS_SMOKE_EFFECT
+			flags_inv = HIDEEYES|HIDEFACE
+			body_parts_covered = FACE|EYES
+			icon_state = "voxmask"
+			filter = list("phoron", "sleeping_agent", "oxygen")
+			to_chat(usr, "You pull the mask up to cover your face.")
+		usr.update_inv_wear_mask()
 
 /obj/item/clothing/mask/gas/German
 	name = "German Gas Mask"
